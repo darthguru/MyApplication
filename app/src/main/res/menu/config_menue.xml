@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.dhuparbrothers.dhuparbrothers.MainActivity">
+    <item
+        android:id="@+id/confirm_feeder"
+        android:orderInCategory="100"
+        android:title="@string/confirm"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/delete_feeder"
+        android:orderInCategory="100"
+        android:title="@string/cancel"
+        app:showAsAction="never" />
+</menu>

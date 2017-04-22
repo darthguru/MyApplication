@@ -4,17 +4,19 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-/**
- * Created by darthguru on 4/22/17.
- */
+import java.util.ArrayList;
+
 
 public class ScheduleActivity extends AppCompatActivity {
 
     public int request_code;
-    public ScheduleParcelable name_med = new ScheduleParcelable();
+    public String[] freq_med;
+    public ArrayList<Spinner> spinners;
     public Spinner spinner1;
     public Spinner spinner2;
     public Spinner spinner3;
@@ -29,9 +31,9 @@ public class ScheduleActivity extends AppCompatActivity {
         setContentView(R.layout.new_config);
 
 
-//        name_med = getIntent().getParcelableExtra("nameMed");
-//
-//        request_code = getIntent().getIntExtra("requestCode", -1);
+        freq_med = getIntent().getStringArrayExtra("freqMed");
+
+        request_code = getIntent().getIntExtra("requestCode", -1);
 
         populateSpinners();
 
@@ -46,11 +48,17 @@ public class ScheduleActivity extends AppCompatActivity {
         adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner1.setAdapter(adapter1);
 
+        int spinnerPosition = adapter1.getPosition(freq_med[1]);
+        spinner1.setSelection(spinnerPosition);
+
         spinner2 = (Spinner) findViewById(R.id.time_spinner_2);
         ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(this,
                 R.array.time_array, R.layout.spinner_white);
         adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner2.setAdapter(adapter2);
+
+        spinnerPosition = adapter2.getPosition(freq_med[1]);
+        spinner2.setSelection(spinnerPosition);
 
         spinner3 = (Spinner) findViewById(R.id.time_spinner_3);
         ArrayAdapter<CharSequence> adapter3 = ArrayAdapter.createFromResource(this,
@@ -58,11 +66,18 @@ public class ScheduleActivity extends AppCompatActivity {
         adapter3.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner3.setAdapter(adapter3);
 
+        spinnerPosition = adapter3.getPosition(freq_med[1]);
+        spinner3.setSelection(spinnerPosition);
+
+
         spinner4 = (Spinner) findViewById(R.id.time_spinner_4);
         ArrayAdapter<CharSequence> adapter4 = ArrayAdapter.createFromResource(this,
                 R.array.time_array, R.layout.spinner_white);
         adapter4.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner4.setAdapter(adapter4);
+
+        spinnerPosition = adapter4.getPosition(freq_med[1]);
+        spinner4.setSelection(spinnerPosition);
 
         spinner5 = (Spinner) findViewById(R.id.time_spinner_5);
         ArrayAdapter<CharSequence> adapter5 = ArrayAdapter.createFromResource(this,
@@ -70,11 +85,24 @@ public class ScheduleActivity extends AppCompatActivity {
         adapter5.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner5.setAdapter(adapter5);
 
+        spinnerPosition = adapter5.getPosition(freq_med[1]);
+        spinner5.setSelection(spinnerPosition);
+
         spinner6 = (Spinner) findViewById(R.id.time_spinner_6);
         ArrayAdapter<CharSequence> adapter6 = ArrayAdapter.createFromResource(this,
                 R.array.time_array, R.layout.spinner_white);
         adapter6.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner6.setAdapter(adapter6);
+
+        spinnerPosition = adapter6.getPosition(freq_med[1]);
+        spinner6.setSelection(spinnerPosition);
+
+        spinners.add(spinner1);
+        spinners.add(spinner2);
+        spinners.add(spinner3);
+        spinners.add(spinner4);
+        spinners.add(spinner5);
+        spinners.add(spinner6);
     }
 
     @Override
@@ -83,6 +111,46 @@ public class ScheduleActivity extends AppCompatActivity {
         setResult(20000, intent);
         finish();
         super.onBackPressed();
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.config_menue, menu);
+        MenuItem delete = menu.findItem(R.id.delete_feeder);
+        if (request_code != -1) {
+            delete.setVisible(true);
+        } else {
+            delete.setVisible(false);
+        }
+        return true;
+    }
+
+
+    public void setValues() {
+        int j = 0;
+        for (Spinner i : spinners) {
+            freq_med[j] = i.getSelectedItem().toString();
+            j++;
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.confirm_feeder) {
+            setValues();
+            Intent intent = new Intent();
+            intent.putExtra("freqMed", freq_med);
+            setResult(100, intent);
+            finish();
+        } else if (id == R.id.delete_feeder) {
+            Intent intent = new Intent();
+            setResult(20000, intent);
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 }

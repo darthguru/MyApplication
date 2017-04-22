@@ -15,13 +15,11 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-
 public class MainActivity extends AppCompatActivity {
 
     boolean doubleBackToExitPressedOnce = false;
     String TAG = "this";
-    ArrayList<ScheduleParcelable> schedule;
+    String[] frequency = new String[]{"Morning", "Morning", "Morning", "Morning", "Morning", "Morning"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,16 +35,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ScheduleActivity.class);
-                intent.putExtra("nameMed", schedule);
+                intent.putExtra("nameMed", frequency);
                 startActivityForResult(intent, 1);
             }
         });
-
     }
 
 
     public void getSchedule() {
-        ListAdapter schedule_adapter = new ScheduleAdapter(this, schedule);
+        ListAdapter schedule_adapter = new ScheduleAdapter(this, frequency);
         ListView schedule_list = (ListView) findViewById(R.id.schedule_list);
         schedule_list.setClickable(false);
         schedule_list.setAdapter(schedule_adapter);
@@ -81,5 +78,11 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.BLUETOOTH_ADMIN}, 5);
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
     }
 }
