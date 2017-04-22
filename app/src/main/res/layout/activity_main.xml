@@ -1,30 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.darthguru.myapplication.MainActivity">
+    tools:context="com.example.darthguru.myapplication.MainActivity"
+    tools:layout_editor_absoluteX="0dp"
+    tools:layout_editor_absoluteY="81dp">
 
     <RelativeLayout
         android:id="@+id/element_layout"
         android:layout_width="368dp"
         android:layout_height="wrap_content"
-        tools:layout_editor_absoluteY="0dp"
-        tools:layout_editor_absoluteX="8dp">
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="0dp">
         <Button
             android:id="@+id/create_config"
-            android:layout_marginTop="20dp"
-            android:text="@string/write_a_new_config"
-            android:layout_centerHorizontal="true"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:text="@string/write_a_new_config" />
         <ListView
-            android:layout_margin="20dp"
             android:id="@+id/schedule_list"
-            android:layout_below="@id/create_config"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_below="@id/create_config"
+            android:layout_margin="20dp">
 
         </ListView>
     </RelativeLayout>
