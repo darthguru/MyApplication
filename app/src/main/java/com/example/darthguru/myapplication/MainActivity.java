@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         checkPermission();
         Log.i(TAG, "onCreate: created main activity");
 
-        ListAdapter schedule_adapter = new ScheduleAdpater(this, schedule);
+        ListAdapter schedule_adapter = new ScheduleAdapter(this, schedule);
         ListView feeder_list = (ListView) findViewById(R.id.schedule_list);
         feeder_list.setClickable(false);
         feeder_list.setAdapter(schedule_adapter);

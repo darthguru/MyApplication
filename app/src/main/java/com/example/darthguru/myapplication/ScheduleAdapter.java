@@ -8,9 +8,9 @@ import android.widget.ArrayAdapter;
  * Created by darthguru on 4/22/17.
  */
 
-public class ScheduleAdpater extends ArrayAdapter<String> {
+public class ScheduleAdapter extends ArrayAdapter<String> {
 
-    public ScheduleAdpater(@NonNull Context context, String[] objects) {
+    public ScheduleAdapter(@NonNull Context context, String[] objects) {
         super(context, R.layout.schedule_layout, objects);
     }
 }
