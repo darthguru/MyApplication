@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">My Application</string>
     <string name="write_a_new_config">write a new config</string>
+    <string name="frequency_text">frequency</string>
+    <string name="name_text">name</string>
 </resources>
