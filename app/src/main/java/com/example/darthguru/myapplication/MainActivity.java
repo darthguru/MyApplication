@@ -24,14 +24,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         checkPermission();
         Log.i(TAG, "onCreate: created main activity");
+        getSchedule();
+        Log.i(TAG, "onCreate: got schedule");
 
+    }
+
+
+    public void getSchedule() {
         ListAdapter schedule_adapter = new ScheduleAdapter(this, schedule);
         ListView feeder_list = (ListView) findViewById(R.id.schedule_list);
         feeder_list.setClickable(false);
         feeder_list.setAdapter(schedule_adapter);
-
     }
-
 
     @Override
     public void onBackPressed() {
