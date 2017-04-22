@@ -10,4 +10,13 @@
     <string name="medicine_5">Medicine 5</string>
     <string name="medicine_4">Medicine 4</string>
     <string name="medicine_3">Medicine 3</string>
+
+    <array name="time_array">
+        <item>Morning</item>
+        <item>Afternoon</item>
+        <item>night</item>
+        <item>2 times</item>
+        <item>3 times</item>
+    </array>
+
 </resources>

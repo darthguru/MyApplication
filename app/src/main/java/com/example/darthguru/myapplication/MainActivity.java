@@ -29,16 +29,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         checkPermission();
         Log.i(TAG, "onCreate: created main activity");
-        getSchedule();
+//        getSchedule();
         Log.i(TAG, "onCreate: got schedule");
 
         Button create_config = (Button) findViewById(R.id.create_config);
         create_config.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ScheduleParcelable new_feeder = new ScheduleParcelable();
                 Intent intent = new Intent(getApplicationContext(), ScheduleActivity.class);
-                intent.putExtra("feederData", new_feeder);
+                intent.putExtra("nameMed", schedule);
                 startActivityForResult(intent, 1);
             }
         });
