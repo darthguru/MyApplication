@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ScheduleActivity.class);
-                intent.putExtra("nameMed", frequency);
+                intent.putExtra("freqMed", frequency);
                 startActivityForResult(intent, 1);
             }
         });
@@ -83,6 +83,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == 100) {
+
+            frequency = data.getStringArrayExtra("freqMed");
+            Log.i(TAG, "onActivityResult: " + frequency.toString());
+
+        }
 
     }
 }

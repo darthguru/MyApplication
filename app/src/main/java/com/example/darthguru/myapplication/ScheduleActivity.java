@@ -10,13 +10,15 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class ScheduleActivity extends AppCompatActivity {
 
     public int request_code;
     public String[] freq_med;
-    public ArrayList<Spinner> spinners;
+    public List<Spinner> spinners = new ArrayList<Spinner>() {
+    };
     public Spinner spinner1;
     public Spinner spinner2;
     public Spinner spinner3;
@@ -30,25 +32,21 @@ public class ScheduleActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_config);
 
-
         freq_med = getIntent().getStringArrayExtra("freqMed");
 
         request_code = getIntent().getIntExtra("requestCode", -1);
 
-        populateSpinners();
-
-
-
+        fillSpinners();
     }
 
-    public void populateSpinners() {
+    public void fillSpinners() {
         spinner1 = (Spinner) findViewById(R.id.time_spinner);
         ArrayAdapter<CharSequence> adapter1 = ArrayAdapter.createFromResource(this,
                 R.array.time_array, R.layout.spinner_white);
         adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner1.setAdapter(adapter1);
 
-        int spinnerPosition = adapter1.getPosition(freq_med[1]);
+        int spinnerPosition = adapter1.getPosition(freq_med[0]);
         spinner1.setSelection(spinnerPosition);
 
         spinner2 = (Spinner) findViewById(R.id.time_spinner_2);
@@ -66,7 +64,7 @@ public class ScheduleActivity extends AppCompatActivity {
         adapter3.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner3.setAdapter(adapter3);
 
-        spinnerPosition = adapter3.getPosition(freq_med[1]);
+        spinnerPosition = adapter3.getPosition(freq_med[2]);
         spinner3.setSelection(spinnerPosition);
 
 
@@ -76,7 +74,7 @@ public class ScheduleActivity extends AppCompatActivity {
         adapter4.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner4.setAdapter(adapter4);
 
-        spinnerPosition = adapter4.getPosition(freq_med[1]);
+        spinnerPosition = adapter4.getPosition(freq_med[3]);
         spinner4.setSelection(spinnerPosition);
 
         spinner5 = (Spinner) findViewById(R.id.time_spinner_5);
@@ -85,7 +83,7 @@ public class ScheduleActivity extends AppCompatActivity {
         adapter5.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner5.setAdapter(adapter5);
 
-        spinnerPosition = adapter5.getPosition(freq_med[1]);
+        spinnerPosition = adapter5.getPosition(freq_med[4]);
         spinner5.setSelection(spinnerPosition);
 
         spinner6 = (Spinner) findViewById(R.id.time_spinner_6);
@@ -94,7 +92,7 @@ public class ScheduleActivity extends AppCompatActivity {
         adapter6.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner6.setAdapter(adapter6);
 
-        spinnerPosition = adapter6.getPosition(freq_med[1]);
+        spinnerPosition = adapter6.getPosition(freq_med[5]);
         spinner6.setSelection(spinnerPosition);
 
         spinners.add(spinner1);
@@ -116,13 +114,7 @@ public class ScheduleActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.config_menue, menu);
-        MenuItem delete = menu.findItem(R.id.delete_feeder);
-        if (request_code != -1) {
-            delete.setVisible(true);
-        } else {
-            delete.setVisible(false);
-        }
+        getMenuInflater().inflate(R.menu.config_menu, menu);
         return true;
     }
 
