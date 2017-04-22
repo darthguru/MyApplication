@@ -12,11 +12,13 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
     boolean doubleBackToExitPressedOnce = false;
     String TAG = "this";
-    String[] schedule;
+    ArrayList<ScheduleParcelable> schedule;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,9 +34,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void getSchedule() {
         ListAdapter schedule_adapter = new ScheduleAdapter(this, schedule);
-        ListView feeder_list = (ListView) findViewById(R.id.schedule_list);
-        feeder_list.setClickable(false);
-        feeder_list.setAdapter(schedule_adapter);
+        ListView schedule_list = (ListView) findViewById(R.id.schedule_list);
+        schedule_list.setClickable(false);
+        schedule_list.setAdapter(schedule_adapter);
     }
 
     @Override
