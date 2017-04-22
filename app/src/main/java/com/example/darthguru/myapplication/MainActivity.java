@@ -1,6 +1,7 @@
 package com.example.darthguru.myapplication;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,6 +9,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -28,6 +31,17 @@ public class MainActivity extends AppCompatActivity {
         Log.i(TAG, "onCreate: created main activity");
         getSchedule();
         Log.i(TAG, "onCreate: got schedule");
+
+        Button create_config = (Button) findViewById(R.id.create_config);
+        create_config.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ScheduleParcelable new_feeder = new ScheduleParcelable();
+                Intent intent = new Intent(getApplicationContext(), ScheduleActivity.class);
+                intent.putExtra("feederData", new_feeder);
+                startActivityForResult(intent, 1);
+            }
+        });
 
     }
 

@@ -3,4 +3,11 @@
     <string name="write_a_new_config">write a new config</string>
     <string name="frequency_text">frequency</string>
     <string name="name_text">name</string>
+    <string name="add_medicine">add medicine</string>
+    <string name="medicine_1">Medicine 1</string>
+    <string name="medicine_2">Medicine 2</string>
+    <string name="medicine_6">Medicine 6</string>
+    <string name="medicine_5">Medicine 5</string>
+    <string name="medicine_4">Medicine 4</string>
+    <string name="medicine_3">Medicine 3</string>
 </resources>
