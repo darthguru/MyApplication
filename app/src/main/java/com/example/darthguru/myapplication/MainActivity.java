@@ -1,7 +1,12 @@
 package com.example.darthguru.myapplication;
 
 import android.Manifest;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,9 +22,20 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                String deviceName = device.getName();
+                String deviceHardwareAddress = device.getAddress();
+            }
+        }
+    };
     boolean doubleBackToExitPressedOnce = false;
     String TAG = "this";
     String[] frequency = new String[]{"Morning", "Morning", "Morning", "Morning", "Morning", "Morning"};
+    private BluetoothAdapter arduino;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +45,15 @@ public class MainActivity extends AppCompatActivity {
         Log.i(TAG, "onCreate: created main activity");
 //        getSchedule();
         Log.i(TAG, "onCreate: got schedule");
+
+        arduino = BluetoothAdapter.getDefaultAdapter();
+        if (!arduino.isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, 20);
+        }
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        registerReceiver(mReceiver, filter);
+
 
         Button create_config = (Button) findViewById(R.id.create_config);
         create_config.setOnClickListener(new View.OnClickListener() {
@@ -40,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
 
     public void getSchedule() {
         ListAdapter schedule_adapter = new ScheduleAdapter(this, frequency);
@@ -65,6 +89,12 @@ public class MainActivity extends AppCompatActivity {
                 doubleBackToExitPressedOnce = false;
             }
         }, 2000);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(mReceiver);
     }
 
     public void checkPermission(){
