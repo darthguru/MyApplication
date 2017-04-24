@@ -10,6 +10,8 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -22,38 +24,27 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                String deviceName = device.getName();
-                String deviceHardwareAddress = device.getAddress();
-            }
-        }
-    };
     boolean doubleBackToExitPressedOnce = false;
     String TAG = "this";
     String[] frequency = new String[]{"Morning", "Morning", "Morning", "Morning", "Morning", "Morning"};
-    private BluetoothAdapter arduino;
+    
+    BluetoothAdapter bluetoothAdapter;
+    BluetoothService bluetoothService;
+    CoordinatorLayout coordinatorLayout;
+    Snackbar snackTurnOn;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         checkPermission();
+
         Log.i(TAG, "onCreate: created main activity");
 //        getSchedule();
         Log.i(TAG, "onCreate: got schedule");
-
-        arduino = BluetoothAdapter.getDefaultAdapter();
-        if (!arduino.isEnabled()) {
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, 20);
-        }
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        registerReceiver(mReceiver, filter);
-
 
         Button create_config = (Button) findViewById(R.id.create_config);
         create_config.setOnClickListener(new View.OnClickListener() {
@@ -71,6 +62,64 @@ public class MainActivity extends AppCompatActivity {
         ListView schedule_list = (ListView) findViewById(R.id.schedule_list);
         schedule_list.setClickable(false);
         schedule_list.setAdapter(schedule_adapter);
+    }
+
+    public void bluetooth_init(){
+
+        // enable bluetooth
+        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        startActivityForResult(enableBtIntent, Constants.REQUEST_ENABLE_BT);
+
+        //
+
+    }
+
+    public void enableBluetooth(){
+        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        startActivityForResult(enableBtIntent, Constants.REQUEST_ENABLE_BT);
+    }
+
+    // Create a BroadcastReceiver for ACTION_FOUND
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            // When discovery finds a device
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                // Get the BluetoothDevice object from the Intent
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                device.fetchUuidsWithSdp();
+
+            } else if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
+                int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR);
+                switch (state) {
+                    case BluetoothAdapter.STATE_OFF:
+                        Log.i(TAG, "onReceive: Bluetooth off");
+                        Toast.makeText(context, "Bluetooth  turned off ", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+        }
+    };
+
+    private void sendMessage(String message) {
+        // Check that we're actually connected before trying anything
+        if (bluetoothService.getState() != Constants.STATE_CONNECTED) {
+            Snackbar.make(coordinatorLayout, "You are not connected", Snackbar.LENGTH_LONG)
+                    .setAction("Connect", new View.OnClickListener() {
+                        @Override public void onClick(View v) {
+                            reconnect();
+                        }
+                    }).show();
+            return;
+        } else {
+            byte[] send = message.getBytes();
+            bluetoothService.write(send);
+        }
+    }
+
+    private void reconnect() {
+        bluetoothService.stop();
+        bluetoothService.connect();
     }
 
     @Override
@@ -94,7 +143,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(mReceiver);
     }
 
     public void checkPermission(){
@@ -117,7 +165,9 @@ public class MainActivity extends AppCompatActivity {
         if (resultCode == 100) {
 
             frequency = data.getStringArrayExtra("freqMed");
-            Log.i(TAG, "onActivityResult: " + frequency.toString());
+            for(String i : frequency){
+                Log.i(TAG, "onActivityResult: " + i);
+            }
 
         }
 
