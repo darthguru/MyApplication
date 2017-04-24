@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -22,6 +23,8 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.lang.ref.WeakReference;
+
 public class MainActivity extends AppCompatActivity {
 
     boolean doubleBackToExitPressedOnce = false;
@@ -33,9 +36,6 @@ public class MainActivity extends AppCompatActivity {
     CoordinatorLayout coordinatorLayout;
     Snackbar snackTurnOn;
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
         Log.i(TAG, "onCreate: created main activity");
 //        getSchedule();
         Log.i(TAG, "onCreate: got schedule");
+        myHandler handler = new myHandler(MainActivity.this);
+
 
         Button create_config = (Button) findViewById(R.id.create_config);
         create_config.setOnClickListener(new View.OnClickListener() {
@@ -110,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
                             reconnect();
                         }
                     }).show();
-            return;
         } else {
             byte[] send = message.getBytes();
             bluetoothService.write(send);
@@ -163,13 +164,62 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == 100) {
-
+            String message = null;
             frequency = data.getStringArrayExtra("freqMed");
-            for(String i : frequency){
+            for(String i : frequency) {
                 Log.i(TAG, "onActivityResult: " + i);
+                message.concat(i + ",");
             }
-
+            sendMessage(message);
         }
+
+    }
+
+    private static class myHandler extends Handler {
+        private final WeakReference<MainActivity> mActivity;
+
+        public myHandler(MainActivity activity) {
+            mActivity = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+
+            final MainActivity activity = mActivity.get();
+
+            switch (msg.what) {
+                case Constants.MESSAGE_STATE_CHANGE:
+                    switch (msg.arg1) {
+                        case Constants.STATE_CONNECTED:
+                            break;
+                        case Constants.STATE_CONNECTING:
+                            break;
+                        case Constants.STATE_NONE:
+                            break;
+                        case Constants.STATE_ERROR:
+                            break;
+                    }
+                    break;
+                case Constants.MESSAGE_WRITE:
+                    Toast.makeText(activity,"talking to bluetooth",Toast.LENGTH_SHORT).show();
+                    break;
+                case Constants.MESSAGE_READ:
+                    String readMessage = (String) msg.obj;
+                    Log.i(activity.TAG, "handleMessage: reading message from bluetooth"+ readMessage.trim());
+                    break;
+
+                case Constants.MESSAGE_SNACKBAR:
+                    Snackbar.make(activity.coordinatorLayout, msg.getData().getString(Constants.SNACKBAR), Snackbar.LENGTH_LONG)
+                            .setAction("Connect", new View.OnClickListener() {
+                                @Override public void onClick(View v) {
+                                    activity.reconnect();
+                                }
+                            }).show();
+
+                    break;
+            }
+        }
+
 
     }
 }
