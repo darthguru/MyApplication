@@ -170,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(TAG, "onActivityResult: " + i);
                 message.concat("8,"+ i + ">");
             }
+            sendMessage("1>");
             sendMessage(message);
         }
 
