@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     BluetoothAdapter bluetoothAdapter;
     BluetoothService bluetoothService;
     CoordinatorLayout coordinatorLayout;
-    Snackbar snackTurnOn;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
