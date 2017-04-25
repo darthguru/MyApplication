@@ -3,6 +3,7 @@ package com.example.darthguru.myapplication;
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -25,6 +26,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,7 +48,31 @@ public class MainActivity extends AppCompatActivity {
         Log.i(TAG, "onCreate: created main activity");
 //        getSchedule();
         Log.i(TAG, "onCreate: got schedule");
-        myHandler handler = new myHandler(MainActivity.this);
+
+        String deviceName = "HC-05";
+
+        BluetoothDevice result = null;
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        enableBluetooth();
+
+        Set<BluetoothDevice> devices = bluetoothAdapter.getBondedDevices();
+        if (devices != null) {
+            for (BluetoothDevice device : devices) {
+                String name;
+                name = device.getName();
+                Log.i(TAG, "onCreate: "+name);
+                if (deviceName.equals(device.getName())) {
+                    result = device;
+                    break;
+                }
+            }
+        }
+        if (result != null){
+            myHandler handler = new myHandler(MainActivity.this);
+            bluetoothService = new BluetoothService(handler,result);
+            bluetoothService.connect();
+            Toast.makeText(this,"connected to bluetooth",Toast.LENGTH_LONG).show();
+        }
 
 
         Button create_config = (Button) findViewById(R.id.create_config);
@@ -67,15 +93,6 @@ public class MainActivity extends AppCompatActivity {
         schedule_list.setAdapter(schedule_adapter);
     }
 
-    public void bluetooth_init(){
-
-        // enable bluetooth
-        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-        startActivityForResult(enableBtIntent, Constants.REQUEST_ENABLE_BT);
-
-        //
-
-    }
 
     public void enableBluetooth(){
         Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -164,14 +181,30 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == 100) {
-            String message = null;
+            String message = "";
             frequency = data.getStringArrayExtra("freqMed");
             for(String i : frequency) {
                 Log.i(TAG, "onActivityResult: " + i);
-                message.concat("8,"+ i + ">");
+                if(i.equals("Morning")){
+                    message = message+"8,1>";
+                }
+                if(i.equals("Afternoon")){
+                    message = message+"8,2>";
+                }
+                if(i.equals("Night")){
+                    message = message+"8,3>";
+                }
+                if(i.equals("2 times")){
+                    message = message+"8,4>";
+                }
+                if(i.equals("3 times")){
+                    message = message+"8,5>";
+                }
             }
+            sendMessage("2>");
             sendMessage("1>");
             sendMessage(message);
+            sendMessage("5>");
         }
 
     }
@@ -206,7 +239,8 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case Constants.MESSAGE_READ:
                     String readMessage = (String) msg.obj;
-                    Log.i(activity.TAG, "handleMessage: reading message from bluetooth"+ readMessage.trim());
+                    Log.i(activity.TAG, "handleMessage: " + msg.toString());
+                    Log.i(activity.TAG, "handleMessage: reading message from bluetooth  "+ readMessage);
                     break;
 
                 case Constants.MESSAGE_SNACKBAR:
